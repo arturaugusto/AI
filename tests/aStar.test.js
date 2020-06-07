@@ -1,7 +1,7 @@
 import {gerarMapa, caminhar, mDist} from '../src/aStar'
 
 
-test.skip('caminha passando pelo obstáculo', () => {
+test('caminha passando pelo obstáculo', () => {
   // cria mapa
   let mapa = gerarMapa(4, 4)
 
@@ -14,12 +14,12 @@ test.skip('caminha passando pelo obstáculo', () => {
   //mapa[1][2].path = false
   //mapa[2][2].path = false
   
-  caminhar(mapa, origem, destino)
+  caminhar(mapa, origem, destino, (item, atual, destino) => mDist(item, destino) )
 
   // gera grafico simplificado
   let graph = mapa.map(row => row.map(cell => cell.trail ? 'x' : (cell.path ? ' ' : '#')))
 
-  //console.log(graph)
+  console.log(graph)
   const esperado = [
     [ 'x', '#', ' ', ' ' ],
     [ 'x', 'x', 'x', 'x' ],
@@ -30,7 +30,7 @@ test.skip('caminha passando pelo obstáculo', () => {
   expect(graph).toEqual(esperado);
 });
 
-test('resolve exercicio 1 modulo 1', () => {
+const mapaExercicio = () => {
   // cria mapa
   let a = {id: 'a', x: 3, y: 0}
   let b = {id: 'b', x: 8, y: 0}
@@ -51,28 +51,44 @@ test('resolve exercicio 1 modulo 1', () => {
   a.conn = [f, d]
   b.conn = [d, g]
   c.conn = [k, e]
-  d.conn = [a, b]
+  d.conn = [a, b, j]
   e.conn = [c, h, l]
   f.conn = [a, m]
   g.conn = [b, k]
   h.conn = [o, l]
   i.conn = [n, j]
-  j.conn = [i, o]
+  j.conn = [i, o, d]
   k.conn = [g, c]
   l.conn = [e, h]
   m.conn = [f, n]
   n.conn = [i, m]
   o.conn = [j, h]
   let mapa = [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o]
+  return mapa
+}
+
+test('resolve exercicio 1 modulo 1', () => {
+
 
   // define origem e destino
-  let origem = f
-  let destino = l
-  
-  caminhar(mapa, origem, destino)
-  console.log(mapa.filter(item => item.trail).sort((a, b) => a.trail - b.trail))
-  // gera grafico simplificado
-  //let graph = mapa.map(row => row.map(cell => cell.trail ? 'x' : (cell.path ? ' ' : '#')))
+  let origem
+  let destino
+
+  console.log('# heuristicaManhattan. Percorre 32 casas e percorre menor quantidade de nós.')
+  const heuristicaManhattan = (item, atual, destino) => mDist(item, destino)
+  let mapa1 = mapaExercicio()
+  origem = mapa1.filter(x => x.id === 'f')[0]
+  destino = mapa1.filter(x => x.id === 'l')[0]
+  caminhar(mapa1, origem, destino, heuristicaManhattan)
+  console.log(mapa1.filter(item => item.trail).sort((a, b) => a.trail - b.trail))
+
+  console.log('# heuristicaPedagio. Percorre 36 casas. Seria necessário fazer uma busca em profundidade?')
+  let mapa2 = mapaExercicio()
+  origem = mapa2.filter(x => x.id === 'f')[0]
+  destino = mapa2.filter(x => x.id === 'l')[0]
+  const heuristicaPedagio = (item, atual, destino) => mDist(atual, item) + mDist(item, destino)
+  caminhar(mapa2, origem, destino, heuristicaPedagio)
+  console.log(mapa2.filter(item => item.trail).sort((a, b) => a.trail - b.trail))
 
 
 });
