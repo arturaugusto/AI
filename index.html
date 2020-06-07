@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <style type="text/css">
+    body {
+      font-family: sans-serif;
+    }
+    .cell {
+      width: 40px;
+      height: 40px;
+      display: inline-block;
+      display: inline-block;
+      border-style: solid;
+      border-width: thin;
+      border-color: #918141;
+      user-select: none;
+    }
+
+    .trail {
+      background-color: red;
+    }
+
+    .path {
+      background-color: black;
+    }
+
+  </style>
+</head>
+<body>
+  
+  <div id="app">
+    <input type="button" name="" value="executar" @click="run" />
+    <br><br>
+    <div v-for="row in mapa">
+      <div
+        class="cell"
+        v-for="cell in row"
+        v-bind:class="[
+          {trail: cell.trail},
+          {path: !cell.path}
+        ]"
+        @click="alternaObstaculo(cell.x, cell.y)">
+          <!-- <span>{{cell === origem ? 'O' : ''}} {{cell === destino ? 'D' : ''}}</span> -->
+          <span style="font-size: 0.4em">{{cell.x}}, {{cell.y}}</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="./dist/main.js"></script>
+</body>
+</html>
